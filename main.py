@@ -225,6 +225,10 @@ class EventLists(Frame):
 		button1=Button(self,text="Back",command=lambda:controller.show_frame(Home))
 		button1.grid(row =4, column = 5, padx=20, pady =20)
 
+		button2=Button(self,text="select",command=self.select_event)
+		button2.grid(row =5, column = 5, padx=20, pady =20)
+
+
 		self.tree=Treeview( self, columns=('#1'))
 		self.tree.heading('#1',text='event name')
 
@@ -240,6 +244,25 @@ class EventLists(Frame):
 			self.tree.insert("",'end',values=i)
 
 
+	def select_event(self):
+
+		self.curItem = self.tree.focus()
+		print (self.tree.item(self.curItem))
+		self.dict_item=self.tree.item(self.curItem)
+		print(type(self.dict_item))
+		self.product_list=[]
+		self.product_list=self.dict_item.get('values')
+		print(self.product_list)
+
+		self.event_name=self.product_list[0]
+
+		datalist=[]
+		datalist=select(self.event_name)
+		print(datalist)
+		
+
+
+
 class AddEvents(Frame):
 
 	def __init__(self, parent, controller):
@@ -251,11 +274,37 @@ class AddEvents(Frame):
 
 		self.event_label=Label(self, text="Event Name")
 		self.event=Text(self, height=1, width=30)
+
+		self.coordinator_label=Label(self, text="coordinator Name")
+		self.coordinator=Text(self, height=1, width=30)
+
+		self.coordinator_no_label=Label(self, text="coordinator Number")
+		self.coordinator_no=Text(self, height=1, width=30)
+
+		self.fees_label=Label(self, text="fees")
+		self.fees=Text(self, height=1, width=30)
+
+		self.timing_label=Label(self, text="Event time")
+		self.time=Text(self, height=1, width=30)
+
+
 		self.event_label.grid(row=4, column=1, padx=10, pady=10)
 		self.event.grid(row = 4, column = 2, padx = 10, pady = 10)
 
+		self.coordinator_label.grid(row=5, column=1, padx=10, pady=10)
+		self.coordinator.grid(row = 5, column = 2, padx = 10, pady = 10)
+
+		self.coordinator_no_label.grid(row=6, column=1, padx=10, pady=10)
+		self.coordinator_no.grid(row = 6, column = 2, padx = 10, pady = 10)
+
+		self.fees_label.grid(row=7, column=1, padx=10, pady=10)
+		self.fees.grid(row = 7, column = 2, padx = 10, pady = 10)
+
+		self.timing_label.grid(row=8, column=1, padx=10, pady=10)
+		self.time.grid(row = 8, column = 2, padx = 10, pady = 10)
+
 		button2=Button(self,text="Add Event",command=self.add_event)
-		button2.grid(row = 8, column = 1, padx = 60, pady = 20)
+		button2.grid(row = 9, column = 1, padx = 60, pady = 20)
 
 	def add_event(self):
 
@@ -263,10 +312,21 @@ class AddEvents(Frame):
 			self.popup=messagebox.showwarning('warning','Add any event')
 		else:
 			self.evnt=self.event.get("1.0","end-1c")
+			self.cood=self.coordinator.get("1.0","end-1c")
+			self.cood_no=self.coordinator_no.get("1.0","end-1c")
+			self.fee=self.fees.get("1.0","end-1c")
+			self.evnt_time=self.time.get("1.0","end-1c")
+
 
 			self.event.delete("1.0","end")
+			self.coordinator.delete("1.0","end")
+			self.coordinator_no.delete("1.0","end")
+			self.fees.delete("1.0","end")
+			self.time.delete("1.0","end")
 
-			add_events(self.evnt)
+
+
+			add_events(self.evnt, self.cood,self.cood_no,self.fee,self.evnt_time)
 
 
 class DeleteEvent(Frame):

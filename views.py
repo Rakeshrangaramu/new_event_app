@@ -39,11 +39,26 @@ def login(f_username, f_password):
 			return False
 
 
-def add_events(eventname):
+def add_events(eventname,coor_name,cood_no,fee,time):
 	# count = int(input("Enter how many events to add: "))
 	# for i in range(count):
 	# event = EventList.create(event_name=input("Enter event: "))
-	event = EventList.create(event_name=eventname)
+	event = EventList.create(event_name=eventname,fees=fee,coordinator_name=coor_name,coordinator_no=cood_no,event_timings=time)
+
+def select(event_name):
+	query=EventList.select().where(EventList.event_name==event_name)
+	# event=list(query)
+	event_list=[]
+	for event in query:
+		print(event.event_name,event.fees)
+		event_list.append(event.event_name)
+		event_list.append(event.coordinator_name)
+		event_list.append(event.coordinator_no)
+		event_list.append(event.fees)
+
+	return event_list	
+	# return query
+
 
 
 def show_events():
@@ -56,7 +71,7 @@ def show_events():
 
 	for event in EventList.select():
 
-		datalist.append(EventList.event_name)
+		datalist.append(event.event_name)
 
 	return datalist	
 
