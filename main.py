@@ -36,13 +36,13 @@ class Event(Tk):
 		container.grid_columnconfigure(0,weight=1)
 		
 		# Geometry of the initial window
-		self.geometry("1600x920")
+		self.geometry("600x400")
 
 		# Creating a dictionary of frames to swap between frames.
 		self.frames={}
 
 		#updating the frames dictionary with all the frames that are created in the project. 
-		for frm in (Main ,Home, LogIn, SignUp, EventLists, AddEvents, DeleteEvent,ViewEvent, AddParticipants, ViewParticipants, RemoveParticipants):
+		for frm in FRAMES:
 			frame=frm(parent=container,controller=self)
 			self.frames[frm]=frame
 			frame.grid(row=0,column=0,sticky="nsew")
@@ -238,6 +238,7 @@ class EventLists(Frame):
 		self.tree['show']='headings'
 		self.treeview=self.tree
 
+		events=[]
 		events=show_events()
 
 		for i in events:
@@ -260,6 +261,15 @@ class EventLists(Frame):
 		datalist=select(self.event_name)
 		print(datalist)
 		
+		self.eventname=datalist[0]
+		self.coodinatorname=datalist[1]
+		self.coodinatorno=datalist[2]
+		self.fees=datalist[3]
+
+		ve = ViewEvent(self, Event)
+		ve.details(self.eventname, self.coodinatorname, self.coodinatorno, self.fees)
+
+		self.controller.show_frame(ViewEvent)
 
 
 
@@ -360,12 +370,56 @@ class DeleteEvent(Frame):
 
 class ViewEvent(Frame):
 
-	def __init__(self, parent, controller):
+	def __init__(self, parent, controller,):
 		Frame.__init__(self,parent)
 		self.controller=controller
 
 		button1=Button(self,text="Back",command=lambda:controller.show_frame(Home))
 		button1.grid(row =2, column = 1, padx=20, pady =20)
+
+		self.tree1=Treeview( self, columns=('#1','#2','#3', '#4'))
+		self.tree1.heading('#1',text='name')
+		self.tree1.heading('#2',text='coordinatorname')
+		self.tree1.heading('#3',text='coordinatorno')
+		self.tree1.heading('#4',text='Price')
+
+		self.tree1.column('#1',stretch=YES,anchor=CENTER)
+		self.tree1.column('#2',stretch=YES,anchor=CENTER)
+		self.tree1.column('#3', stretch=YES,anchor=CENTER)
+		self.tree1.column('#4', stretch=YES,anchor=CENTER)
+		self.tree1.grid(row=2, column=2 ,padx=10,pady=10,columnspan=2, sticky='nsew')
+		self.tree1['show']='headings'
+		# self.tree.bind('<Button-1>', self.select_item)
+
+		self.name=''
+		self.coodname=''
+		self.coodno=''
+		self.fee=''
+
+		# self.tree.insert('', 'end', values=(self.name,self.coodname,self.coodno,self.fee))
+
+
+	def details(self,eventname,coordinatorname,coordinatorno,fees):
+
+		print(eventname,coordinatorname,coordinatorno,fees)
+
+		self.name=eventname
+		self.coodname=coordinatorname
+		self.coodno=coordinatorno
+		self.fee=fees
+		# print(self.coodname)
+
+		self.add(self.name)
+
+		# self.tree1.insert("", 'end', values=(self.name,self.coodname,self.coodno,self.fee))
+		# self.tree.insert("", 'end', values=(coordinatorname,coordinatorno,fees))
+		# self.tree.insert('', 'end', values=(1,2,3,4))
+
+	def add(self,eventname):
+
+		print(eventname)
+		self.tree1.insert("","end",values=(eventname))
+
 
 
 class AddParticipants(Frame):
@@ -478,7 +532,18 @@ class RemoveParticipants(Frame):
 			remove_participants(self.pcpnt)
 
 
-
+FRAMES = (Main,
+ Home,
+ LogIn,
+ SignUp,
+ EventLists,
+ AddEvents,
+ DeleteEvent,
+ ViewEvent,
+ AddParticipants,
+ ViewParticipants,
+ RemoveParticipants
+ )
 app=Event()
 app.mainloop()		
 

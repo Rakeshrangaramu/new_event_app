@@ -72,6 +72,9 @@ def show_events():
 	for event in EventList.select():
 
 		datalist.append(event.event_name)
+		# datalist.append(event.coordinator_name)
+		# datalist.append(event.coordinator_no)
+		# datalist.append(event.fees)
 
 	return datalist	
 
