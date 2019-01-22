@@ -39,11 +39,15 @@ def login(f_username, f_password):
 			return False
 
 
-def add_events(eventname,coor_name,cood_no,fee,time):
+def add_events(eventname,coor_name,cood_no,fee,time,description):
 	# count = int(input("Enter how many events to add: "))
 	# for i in range(count):
 	# event = EventList.create(event_name=input("Enter event: "))
-	event = EventList.create(event_name=eventname,fees=fee,coordinator_name=coor_name,coordinator_no=cood_no,event_timings=time)
+	event = EventList.create(event_name=eventname,
+			fees=fee,
+			coordinator_name=coor_name,
+			coordinator_no=cood_no,
+			event_timings=time,description=description)
 
 def select(event_name):
 	query=EventList.select().where(EventList.event_name==event_name)
@@ -55,11 +59,10 @@ def select(event_name):
 		event_list.append(event.coordinator_name)
 		event_list.append(event.coordinator_no)
 		event_list.append(event.fees)
+		event_list.append(event.description)
 
 	return event_list	
 	# return query
-
-
 
 def show_events():
 
@@ -70,13 +73,39 @@ def show_events():
 	datalist=[]
 
 	for event in EventList.select():
+		print(event.event_name)
 
-		datalist.append(event.event_name)
+		datalist.append([event.event_name,event.coordinator_name,event.coordinator_no,event.fees])
 		# datalist.append(event.coordinator_name)
 		# datalist.append(event.coordinator_no)
 		# datalist.append(event.fees)
 
 	return datalist	
+
+def show_event_name():
+
+	datalist=[]
+
+	for event in EventList.select():
+
+		datalist.append(event.event_name)
+
+	return datalist	
+
+def get_fees(event_name):
+
+	query=EventList.select().where(EventList.event_name==event_name)
+
+	event_fees=[]
+
+	for event in query:
+
+		event_fees.append(event.fees)
+
+	return event_fees	
+
+
+	
 
 
 def remove_events(eventname):
@@ -102,8 +131,15 @@ def add_participants(participant_name,event,amount,ph_no):
 
 
 def view_participants():
-	for event in ParticipantList.select():
-		print(event.name, event.event_name, event.price, sep=" - ")
+	
+	part_list=[]
+
+	for part in ParticipantList.select():
+		part_list.append([part.name,part.event_name,part.price,part.ph_no])
+
+	return part_list	
+
+		# print(event.name, event.event_name, event.price, sep=" - ")
 
 def remove_participants(part):
 	ParticipantList.delete_instance(part)

@@ -106,7 +106,7 @@ class Main(Frame):
 		# button8=Button(self,text="View Participants",command=lambda:controller.show_frame(ViewParticipants))
 		# button9=Button(self,text="Remove Participant",command=lambda:controller.show_frame(RemoveParticipants))
 
-		
+		button3=Button(self,text="List of Events",command=lambda:controller.show_frame(EventLists))
 		button1.grid(row = 2, column = 2, padx=20, pady =20)
 		button2.grid(row = 3, column = 2, padx=20, pady =20)
 		# button3.grid(row = 4, column = 2, padx=20, pady =20)
@@ -116,7 +116,7 @@ class Main(Frame):
 		# button7.grid(row = 8, column = 2, padx=20, pady =20)
 		# button8.grid(row = 9, column = 2, padx=20, pady =20)
 		# button9.grid(row = 10, column = 2, padx=20, pady =20)		
-
+		button3.grid(row = 4, column = 2, padx=20, pady =20)
 
 class LogIn(Frame):
 
@@ -216,33 +216,55 @@ class SignUp(Frame):
 		self.controller.show_frame(Home)
 	
 
+
+
 class EventLists(Frame):
 
 	def __init__(self, parent, controller):
 		Frame.__init__(self,parent)
 		self.controller=controller
 
-		button1=Button(self,text="Back",command=lambda:controller.show_frame(Home))
-		button1.grid(row =4, column = 5, padx=20, pady =20)
+		self.button1=Button(self,text="Back",command=lambda:controller.show_frame(Home))
+		self.button1.grid(row =8, column = 5, padx=20, pady =20)
 
-		button2=Button(self,text="select",command=self.select_event)
-		button2.grid(row =5, column = 5, padx=20, pady =20)
+		self.button2=Button(self,text="select",command=self.select_event)
+		self.button2.grid(row =9, column = 5, padx=20, pady =20)
 
 
-		self.tree=Treeview( self, columns=('#1'))
+		self.tree=Treeview( self, columns=('#1','#2','#3','#4'))
+		
 		self.tree.heading('#1',text='event name')
 
+		self.tree.heading('#2',text='coord name')
+
+		self.tree.heading('#3',text='coord Number')
+
+		self.tree.heading('#4',text='fees')
+
+
 		self.tree.column('#1',stretch=YES,anchor=CENTER)
-		self.tree.grid(row=2, column=1 ,padx=300,pady=10,columnspan=3, sticky='nsew')
+		self.tree.column('#2',stretch=YES,anchor=CENTER)
+		self.tree.column('#3',stretch=YES,anchor=CENTER)
+		self.tree.column('#4',stretch=YES,anchor=CENTER)
+
+		self.tree.grid(row=2, column=2 ,padx=30,pady=10,columnspan=3, sticky='nsew')
 
 		self.tree['show']='headings'
 		self.treeview=self.tree
 
-		events=[]
+		# events=[]
 		events=show_events()
-
+		print(events)
+		
 		for i in events:
+
 			self.tree.insert("",'end',values=i)
+
+		# coordinators=[]
+		# coordinators=show_coordinator_name()
+
+		# for i in coordinators:
+		# 	self.tree.insert('','end',values=i)
 
 
 	def select_event(self):
@@ -265,11 +287,22 @@ class EventLists(Frame):
 		self.coodinatorname=datalist[1]
 		self.coodinatorno=datalist[2]
 		self.fees=datalist[3]
+		self.description=datalist[4]
 
-		ve = ViewEvent(self, Event)
-		ve.details(self.eventname, self.coodinatorname, self.coodinatorno, self.fees)
+		messagebox.showinfo("description",self.description)
 
-		self.controller.show_frame(ViewEvent)
+		# ve = ViewEvent(self, Event)
+		# ve.details(self.eventname, self.coodinatorname, self.coodinatorno, self.fees)
+
+		# self.controller.show_frame(ViewEvent)
+
+	def add_events(self,evnt,cood,cood_no,fee):
+		
+		print(evnt,cood,cood_no,fee)
+
+		self.tree.insert('',"end",values=(evnt,cood,cood_no,fee))
+
+
 
 
 
@@ -297,6 +330,9 @@ class AddEvents(Frame):
 		self.timing_label=Label(self, text="Event time")
 		self.time=Text(self, height=1, width=30)
 
+		self.description_label=Label(self, text="description")
+		self.description=Text(self, height=3, width=30)
+
 
 		self.event_label.grid(row=4, column=1, padx=10, pady=10)
 		self.event.grid(row = 4, column = 2, padx = 10, pady = 10)
@@ -313,6 +349,9 @@ class AddEvents(Frame):
 		self.timing_label.grid(row=8, column=1, padx=10, pady=10)
 		self.time.grid(row = 8, column = 2, padx = 10, pady = 10)
 
+		self.description_label.grid(row=9, column=1, padx=10, pady=10)
+		self.description.grid(row = 9, column = 2, padx = 10, pady = 10)
+
 		button2=Button(self,text="Add Event",command=self.add_event)
 		button2.grid(row = 9, column = 1, padx = 60, pady = 20)
 
@@ -326,17 +365,21 @@ class AddEvents(Frame):
 			self.cood_no=self.coordinator_no.get("1.0","end-1c")
 			self.fee=self.fees.get("1.0","end-1c")
 			self.evnt_time=self.time.get("1.0","end-1c")
-
+			self.desc=self.description.get("1.0","end-1c")
 
 			self.event.delete("1.0","end")
 			self.coordinator.delete("1.0","end")
 			self.coordinator_no.delete("1.0","end")
 			self.fees.delete("1.0","end")
 			self.time.delete("1.0","end")
+			self.description.delete("1.0","end")
 
 
 
-			add_events(self.evnt, self.cood,self.cood_no,self.fee,self.evnt_time)
+			add_events(self.evnt, self.cood,self.cood_no,self.fee,self.evnt_time,self.desc)
+
+			el=EventLists(self,AddEvents)
+			el.add_events(self.evnt, self.cood,self.cood_no,self.fee)
 
 
 class DeleteEvent(Frame):
@@ -370,7 +413,7 @@ class DeleteEvent(Frame):
 
 class ViewEvent(Frame):
 
-	def __init__(self, parent, controller,):
+	def __init__(self, parent, controller):
 		Frame.__init__(self,parent)
 		self.controller=controller
 
@@ -409,16 +452,16 @@ class ViewEvent(Frame):
 		self.fee=fees
 		# print(self.coodname)
 
-		self.add(self.name)
+		# self.add(self.name)
 
-		# self.tree1.insert("", 'end', values=(self.name,self.coodname,self.coodno,self.fee))
+		self.tree1.insert("", 'end', values=(self.name,self.coodname,self.coodno,self.fee))
 		# self.tree.insert("", 'end', values=(coordinatorname,coordinatorno,fees))
 		# self.tree.insert('', 'end', values=(1,2,3,4))
 
-	def add(self,eventname):
+	# def add(self,eventname):
 
-		print(eventname)
-		self.tree1.insert("","end",values=(eventname))
+	# 	print(eventname)
+	# 	self.tree1.insert("","end",values=(eventname))
 
 
 
@@ -439,9 +482,21 @@ class AddParticipants(Frame):
 
 		self.fullname=Text(self, height=1, width=30)
 		self.email=Text(self, height=1, width=30)
-		self.event=Text(self, height=1, width=30)
+		# self.event=Text(self, height=1, width=30)
 		self.amount=Text(self, height=1, width=30)
 		self.ph_no=Text(self, height=1, width=30)
+
+		option=['']
+		event_names=show_event_name()
+
+		for r in event_names:
+			option.append(r)
+
+		options = list(set(option))		#to obtain only unique events 
+		self.variable = StringVar(self)
+		self.variable.set(options[0])		#Setting the default event
+		self.select = OptionMenu(self, self.variable,*options,command=self.get_value).grid(row =6,column =2,padx=10,pady=10)
+		
 
 		self.fullname_label.grid(row=4, column=1, padx=10, pady=10)
 		self.email_label.grid(row=5, column=1, padx=10, pady=10)
@@ -451,7 +506,7 @@ class AddParticipants(Frame):
 
 		self.fullname.grid(row=4, column=2, padx=10, pady=10)
 		self.email.grid(row=5, column=2, padx=10, pady=10)
-		self.event.grid(row=6, column=2, padx=10, pady=10)
+		# self.event.grid(row=6, column=2, padx=10, pady=10)
 		self.amount.grid(row=7, column=2, padx=10, pady=10)
 		self.ph_no.grid(row=8, column=2, padx=10, pady=10)
 
@@ -467,8 +522,8 @@ class AddParticipants(Frame):
 		elif len(self.email.get('1.0','end-1c')) == 0:
 			self.popup=messagebox.showwarning('warning','Enter Email ID')
 
-		elif len(self.event.get('1.0','end-1c')) == 0:
-			self.popup=messagebox.showwarning('warning','Enter Event Name')
+		# elif len(self.event.get('1.0','end-1c')) == 0:
+		# 	self.popup=messagebox.showwarning('warning','Enter Event Name')
 
 		elif len(self.amount.get('1.0','end-1c')) == 0:
 			self.popup=messagebox.showwarning('warning','Enter Amount')
@@ -479,12 +534,12 @@ class AddParticipants(Frame):
 		else:
 			self.sup=self.fullname.get("1.0","end-1c")
 			self.pd=self.email.get("1.0","end-1c")
-			self.evnt=self.event.get("1.0","end-1c")
+			self.evnt=self.name
 			self.amt=self.amount.get("1.0","end-1c")
 			self.pno=self.ph_no.get("1.0","end-1c")
 
 			self.amount.delete("1.0","end")
-			self.event.delete("1.0","end")
+			# self.event.delete("1.0","end")
 			self.fullname.delete("1.0","end")
 			self.email.delete("1.0","end")
 			self.ph_no.delete("1.0","end")
@@ -492,6 +547,16 @@ class AddParticipants(Frame):
 			add_participants(self.sup,self.evnt,self.amt ,self.pno)
 			# signup(self.sup,self.pd, self.fn, self.eid)
 
+	
+	def get_value(self,value):
+
+		self.amount.delete("1.0","end")
+		self.name=value
+
+		self.fee=get_fees(self.name)
+
+		self.amount.insert('end',self.fee)
+			
 
 class ViewParticipants(Frame):
 
@@ -500,7 +565,26 @@ class ViewParticipants(Frame):
 		self.controller=controller
 
 		button1=Button(self,text="Back",command=lambda:controller.show_frame(Home))
-		button1.grid(row =2, column = 1, padx=20, pady =20)
+		button1.grid(row =5, column = 1, padx=20, pady =20)
+
+		self.tree1=Treeview( self, columns=('#1','#2','#3', '#4'))
+		self.tree1.heading('#1',text='name')
+		self.tree1.heading('#2',text='event name')
+		self.tree1.heading('#3',text='Price')
+		self.tree1.heading('#4',text='Phone')
+
+		self.tree1.column('#1',stretch=YES,anchor=CENTER)
+		self.tree1.column('#2',stretch=YES,anchor=CENTER)
+		self.tree1.column('#3', stretch=YES,anchor=CENTER)
+		self.tree1.column('#4', stretch=YES,anchor=CENTER)
+		self.tree1.grid(row=2, column=2 ,padx=10,pady=10,columnspan=2, sticky='nsew')
+		self.tree1['show']='headings'
+		
+		participants=view_participants()
+
+		for i in participants:
+
+			self.tree1.insert("",'end',values=i)
 
 
 class RemoveParticipants(Frame):
